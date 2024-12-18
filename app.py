@@ -83,6 +83,46 @@ def create_client():
 
 @app.route('/api/clients/<int:client_id>', methods=['PUT'])
 def update_client(client_id):
+    """
+    Обновить данные клиента
+    ---
+    parameters:
+      - name: client_id
+        in: path
+        required: true
+        type: integer
+        description: ID клиента для обновления
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+              example: "Иван Иванов"
+            phone_number:
+              type: string
+              example: "+7 123 456 78 90"
+    responses:
+      200:
+        description: Данные клиента обновлены
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            phone_number:
+              type: string
+            expenses:
+              type: number
+      400:
+        description: Некорректный ввод
+      404:
+        description: Клиент не найден
+    """
     client = next((c for c in clients if c['id'] == client_id), None)
     if client is None:
         abort(404, description="Client not found")
@@ -91,6 +131,7 @@ def update_client(client_id):
     client['name'] = request.json.get('name', client['name'])
     client['phone_number'] = request.json.get('phone_number', client['phone_number'])
     return jsonify(client)
+
 
 
 @app.route('/api/clients/<int:client_id>', methods=['DELETE'])
